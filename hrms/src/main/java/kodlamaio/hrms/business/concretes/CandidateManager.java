@@ -39,12 +39,17 @@ public class CandidateManager implements CandidateService {
 	@Override
 	public DataResult<List<Candidate>> getAll() {
 
-		return new SuccessDataResult<List<Candidate>>(this.candidateDao.findAll(), "Data listed.");
+		return new SuccessDataResult<List<Candidate>>(this.candidateDao.findAll(), Messages.DataListed);
+	}
+	
+	@Override
+	public DataResult<Candidate> getByIdentityNumber(String identityNumber) {
+		return new SuccessDataResult<Candidate>(this.candidateDao.getByIdentityNumber(identityNumber));
 	}
 
 	@Override
-	public Result add(Candidate candidate) {
-		var result=BusinessRules.run(checkIfRealPerson(candidate),checkIfUserExists(candidate),checkIfRealEmail(candidate.getEmail()));
+	public Result add(Candidate candidate, String passwordConfirmation) {
+		var result=BusinessRules.run(checkIfRealPerson(candidate),checkIfUserExists(candidate),checkIfRealEmail(candidate.getEmail()),checkIfPasswordsMatch(candidate.getPassword(),passwordConfirmation));
 		
 		if(result!=null) 
 		{
@@ -77,10 +82,14 @@ public class CandidateManager implements CandidateService {
 		return new SuccessResult();
 		
 	}
-
-	@Override
-	public DataResult<Candidate> getByIdentityNumber(String identityNumber) {
-		return new SuccessDataResult<Candidate>(this.candidateDao.getByIdentityNumber(identityNumber));
+	
+	private Result checkIfPasswordsMatch(String password,String passwordConfirmation) {
+		if(!password.equals(passwordConfirmation)) {
+			return new ErrorResult(Messages.PasswordsNotMatch);
+		}
+		return new SuccessResult();
 	}
+
+	
 
 }

@@ -34,13 +34,13 @@ public class User {
 	
 	@Column(name="email")
 	@Email
-	@NotBlank
-	@NotNull
+	@NotBlank(message="Email boş bırakılamaz")
+	@NotNull(message="Email boş bırakılamaz")
 	private String email;
 	
 	@Column(name="password")
-	@NotBlank
-	@NotNull
+	@NotBlank(message="Şifre boş bırakılamaz")
+	@NotNull(message="Şifre boş bırakılamaz")
 	private String password;
 	
 }
